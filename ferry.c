@@ -204,7 +204,7 @@ int main()
             /*         that it is in line */
             /* Then determine the arrival time of the next vehicle */ 
             if (elapsed > lastArrivalTime) {
-                lastArrivalTime += maxTimeToNextArrival;
+                lastArrivalTime += rand() % maxTimeToNextArrival;
                 
                 if (rand() %100 > truckArrivalProb) {
                         /* This is a car */
@@ -434,11 +434,11 @@ int main()
                 fullSpotsOnFerry++; 
                 buf.mtype = CAR_TRAVELING;
                 msgsnd(qidToVehicle, &buf, length, 0);
-            }
+          
             if(msgrcv(qidToCaptainA, &buf, length, TRUCK_LOADED, 
             IPC_NOWAIT) != -1 ) {
                 printf("                                            ");
-                printf("aptain knows truck loaded\n");
+                printf("Captain knows truck loaded\n");
                     fullSpotsOnFerry+=2; 
                 buf.mtype = TRUCK_TRAVELING;
                 msgsnd(qidToVehicle, &buf, length, 0);
