@@ -14,7 +14,7 @@
 
 /* Constants */
 #define TOTAL_SPOTS_ON_FERRY 6
-#define MAX_LOADS 4
+#define MAX_LOADS 11
 #define CROSSING_TIME 1000000
 
 /* Threads to create and control vehiclepthreads */
@@ -46,9 +46,6 @@ sem_t waitUnload;
 sem_t readyUnload;
 sem_t waitToExit;
 
-
-#define spaces_on_ferry 6
-
 //Constants declaration
 struct timeval startTime;
 
@@ -59,7 +56,6 @@ void* car();
 void init();
 void clean();
 int timeChange( const struct timeval startTime );
-int ferryIsFull = 0;
 
 int maxTimeToNextArrival;
 int truckArrivalProb; 
@@ -77,7 +73,6 @@ int pthread_mutex_initChecked(pthread_mutex_t *mutexID,
                               const pthread_mutexattr_t *attrib);
 int pthread_mutex_destroyChecked(pthread_mutex_t *mutexID);
 int timeChange( const struct timeval startTime );
-int askUserValue(char *text);
 
 void* captain_process() {
     int localThreadId;
@@ -98,7 +93,7 @@ void* captain_process() {
             numberOfVehicles = 0;
 	    printf("                                            ");
             printf("Captain has begin LOADING\n");
-            while(numberOfSpacesFilled < 6) {
+            while(numberOfSpacesFilled < TOTAL_SPOTS_ON_FERRY) {
                 pthread_mutex_lockChecked(&protectTrucksQueued);
                 pthread_mutex_lockChecked(&protectCarsQueued);
 
@@ -108,7 +103,7 @@ void* captain_process() {
                 pthread_mutex_unlockChecked(&protectCarsQueued);
                 pthread_mutex_unlockChecked(&protectTrucksQueued);
                 
-                while(numberOfTrucksQueued > 0 && numberOfSpacesFilled < 5 && numberOfTrucksLoaded < 2) {
+                while(numberOfTrucksQueued > 0 && numberOfSpacesFilled < TOTAL_SPOTS_ON_FERRY && numberOfTrucksLoaded < 2) {
                     pthread_mutex_lockChecked(&protectTrucksQueued);
                     trucksQueuedCounter--;
 		    printf("                                            ");
@@ -121,7 +116,7 @@ void* captain_process() {
                     numberOfSpacesFilled+=2;
                     numberOfVehicles++;
                 }
-                while(numberOfCarsQueued > 0 && numberOfSpacesFilled < 6) {
+                while(numberOfCarsQueued > 0 && numberOfSpacesFilled < TOTAL_SPOTS_ON_FERRY) {
                     pthread_mutex_lockChecked(&protectCarsQueued);
                     carsQueuedCounter--;
                     printf("                                            ");
